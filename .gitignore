@@ -57,4 +57,7 @@ great_expectations/uncommitted/
 Thumbs.db
 
 # Project specific
-data-quality-testing-with-great-expectations/ 
+data-quality-testing-with-great-expectations/
+
+# Requirements
+requirements.txt 
