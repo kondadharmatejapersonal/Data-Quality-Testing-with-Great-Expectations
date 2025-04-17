@@ -54,4 +54,7 @@ great_expectations/uncommitted/
 
 # OS
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Project specific
+data-quality-testing-with-great-expectations/ 
