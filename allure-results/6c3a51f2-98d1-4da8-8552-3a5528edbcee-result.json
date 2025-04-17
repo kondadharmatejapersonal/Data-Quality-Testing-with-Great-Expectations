@@ -1,0 +1,75 @@
+{
+  "uuid": "6c3a51f2-98d1-4da8-8552-3a5528edbcee",
+  "historyId": "9b9b6753-0782-46d5-a2a7-79c1f681b331",
+  "name": "Data Quality Validation",
+  "fullName": "ETL Process for Customer Data: Data Quality Validation",
+  "status": "passed",
+  "stage": "finished",
+  "start": 1744929811476,
+  "stop": 1744929811476,
+  "steps": [
+    {
+      "name": "the ETL process has completed",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1744929811476,
+      "stop": 1744929811476,
+      "parameters": []
+    },
+    {
+      "name": "I check the data quality",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1744929811476,
+      "stop": 1744929811476,
+      "parameters": []
+    },
+    {
+      "name": "all state codes should be valid",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1744929811476,
+      "stop": 1744929811476,
+      "parameters": []
+    },
+    {
+      "name": "there should be no null values in customer data",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1744929811476,
+      "stop": 1744929811476,
+      "parameters": []
+    },
+    {
+      "name": "the data should be consistent with source tables",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1744929811476,
+      "stop": 1744929811476,
+      "parameters": []
+    }
+  ],
+  "parameters": [],
+  "labels": [
+    {
+      "name": "feature",
+      "value": "ETL Process for Customer Data"
+    },
+    {
+      "name": "suite",
+      "value": "ETL Process for Customer Data"
+    },
+    {
+      "name": "severity",
+      "value": "normal"
+    },
+    {
+      "name": "framework",
+      "value": "behave"
+    },
+    {
+      "name": "language",
+      "value": "python"
+    }
+  ]
+}

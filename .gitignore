@@ -48,10 +48,6 @@ logs/*.log
 # Great Expectations
 great_expectations/uncommitted/
 
-# Allure
-allure-results/
-allure-report/
-
 # Database
 *.db
 *.sqlite3

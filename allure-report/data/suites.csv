@@ -1,0 +1,3 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","0","ETL Process Execution","","Fri Apr 18 04:13:31 IST 2025","passed","Fri Apr 18 04:13:31 IST 2025","","ETL Process for Customer Data","",""
+"","0","Data Quality Validation","","Fri Apr 18 04:13:31 IST 2025","passed","Fri Apr 18 04:13:31 IST 2025","","ETL Process for Customer Data","",""
