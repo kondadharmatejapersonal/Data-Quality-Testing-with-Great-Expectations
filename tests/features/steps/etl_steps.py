@@ -4,11 +4,12 @@ from pathlib import Path
 import sys
 import json
 from datetime import datetime
-import allure
+from allure_behave.hooks import allure_report
 
 # Add the parent directory to the path so we can import the ETL module
 sys.path.append(str(Path(__file__).parent.parent.parent))
 from src.ecommerce.dim_customer_etl import run
+from src.ecommerce.init_db import init_db
 
 def write_allure_report(test_name, status, description, steps, attachments=None):
     """Write a simple Allure report"""
@@ -28,19 +29,21 @@ def write_allure_report(test_name, status, description, steps, attachments=None)
     with open(report_file, 'w') as f:
         json.dump(report, f, indent=2)
 
-@allure.step('Preparing ETL process')
 @given('the ETL process is ready to run')
 def step_impl(context):
     context.test_name = "ETL Process Execution"
     context.steps = []
     context.attachments = []
+    
+    # Initialize the database
+    init_db()
+    
     context.steps.append({
         'name': 'Preparing ETL process',
         'status': 'passed',
         'start': datetime.now().isoformat()
     })
 
-@allure.step('Running ETL process')
 @when('I execute the ETL process')
 def step_impl(context):
     context.steps.append({
@@ -51,7 +54,6 @@ def step_impl(context):
     run()
     context.steps[-1]['stop'] = datetime.now().isoformat()
 
-@allure.step('Verifying table creation')
 @then('the dim_customer table should be created')
 def step_impl(context):
     context.steps.append({
@@ -60,7 +62,7 @@ def step_impl(context):
         'start': datetime.now().isoformat()
     })
     
-    conn = sqlite3.connect('ecommerce.db')
+    conn = sqlite3.connect('data/ecommerce.db')
     cursor = conn.cursor()
     
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='dim_customer'")
@@ -75,7 +77,6 @@ def step_impl(context):
     assert table_exists, "dim_customer table should exist"
     conn.close()
 
-@allure.step('Checking data presence')
 @then('the table should contain data')
 def step_impl(context):
     context.steps.append({
@@ -84,7 +85,7 @@ def step_impl(context):
         'start': datetime.now().isoformat()
     })
     
-    conn = sqlite3.connect('ecommerce.db')
+    conn = sqlite3.connect('data/ecommerce.db')
     cursor = conn.cursor()
     
     cursor.execute("SELECT COUNT(*) FROM dim_customer")
@@ -99,7 +100,6 @@ def step_impl(context):
     assert count > 0, "dim_customer table should contain data"
     conn.close()
 
-@allure.step('Checking null values')
 @then('there should be no null values in required fields')
 def step_impl(context):
     context.steps.append({
@@ -108,7 +108,7 @@ def step_impl(context):
         'start': datetime.now().isoformat()
     })
     
-    conn = sqlite3.connect('ecommerce.db')
+    conn = sqlite3.connect('data/ecommerce.db')
     cursor = conn.cursor()
     
     cursor.execute("""
@@ -129,7 +129,6 @@ def step_impl(context):
     assert null_count == 0, "There should be no null values in required fields"
     conn.close()
 
-@allure.step('ETL process completed')
 @given('the ETL process has completed')
 def step_impl(context):
     context.test_name = "Data Quality Validation"
@@ -141,7 +140,6 @@ def step_impl(context):
         'start': datetime.now().isoformat()
     })
 
-@allure.step('Running data quality checks')
 @when('I check the data quality')
 def step_impl(context):
     context.steps.append({
@@ -150,7 +148,6 @@ def step_impl(context):
         'start': datetime.now().isoformat()
     })
 
-@allure.step('Validating state codes')
 @then('all state codes should be valid')
 def step_impl(context):
     context.steps.append({
@@ -159,7 +156,7 @@ def step_impl(context):
         'start': datetime.now().isoformat()
     })
     
-    conn = sqlite3.connect('ecommerce.db')
+    conn = sqlite3.connect('data/ecommerce.db')
     cursor = conn.cursor()
     
     cursor.execute("""
@@ -179,7 +176,6 @@ def step_impl(context):
     assert invalid_state_count == 0, "All state codes should be valid"
     conn.close()
 
-@allure.step('Checking customer data nulls')
 @then('there should be no null values in customer data')
 def step_impl(context):
     context.steps.append({
@@ -188,7 +184,7 @@ def step_impl(context):
         'start': datetime.now().isoformat()
     })
     
-    conn = sqlite3.connect('ecommerce.db')
+    conn = sqlite3.connect('data/ecommerce.db')
     cursor = conn.cursor()
     
     cursor.execute("""
@@ -212,7 +208,6 @@ def step_impl(context):
     assert quality_metrics[2] == 0, "There should be no null cities"
     conn.close()
 
-@allure.step('Checking data consistency')
 @then('the data should be consistent with source tables')
 def step_impl(context):
     context.steps.append({
@@ -221,7 +216,7 @@ def step_impl(context):
         'start': datetime.now().isoformat()
     })
     
-    conn = sqlite3.connect('ecommerce.db')
+    conn = sqlite3.connect('data/ecommerce.db')
     cursor = conn.cursor()
     
     cursor.execute("""

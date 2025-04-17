@@ -101,9 +101,8 @@ def before_all(context):
     """
     context.config.setup_logging()
     
-    # Initialize database and run ETL
+    # Initialize database only
     init_db()
-    run()
     
     # Clean and create allure-results directory
     if os.path.exists('allure-results'):

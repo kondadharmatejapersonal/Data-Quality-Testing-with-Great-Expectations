@@ -136,7 +136,7 @@ def check_audit_failures(validation_results):
     return all(results) 
 
 def run():
-    conn = sqlite3.connect('ecommerce.db')
+    conn = sqlite3.connect('data/ecommerce.db')
     cursor = conn.cursor()
 
     # NOTE: WRITE -> AUDIT -> PUBLISH pattern

@@ -2,12 +2,16 @@ import sqlite3
 from pathlib import Path
 
 def init_db():
+    # Create data directory if it doesn't exist
+    data_dir = Path('data')
+    data_dir.mkdir(exist_ok=True)
+    
     # Create database file if it doesn't exist
-    db_path = Path('ecommerce.db')
+    db_path = Path('data/ecommerce.db')
     if db_path.exists():
         db_path.unlink()  # Remove existing database
     
-    conn = sqlite3.connect('ecommerce.db')
+    conn = sqlite3.connect('data/ecommerce.db')
     cursor = conn.cursor()
     
     # Create tables

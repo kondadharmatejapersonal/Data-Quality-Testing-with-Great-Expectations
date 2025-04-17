@@ -135,7 +135,7 @@ fluent_datasources:
         order_by: []
         batch_metadata: {}
         query: select date(datetime_created) as dt, count(*) as cnt from non_validated_dim_customer group by 1
-    connection_string: sqlite:///ecommerce.db
+    connection_string: sqlite:///data/ecommerce.db
 notebooks:
 include_rendered_content:
   globally: false
