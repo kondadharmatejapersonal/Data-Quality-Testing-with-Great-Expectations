@@ -1,0 +1,42 @@
+# Python virtual environment
+env/
+venv/
+ENV/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Great Expectations specific
+great_expectations/uncommitted/
+great_expectations/plugins/
+great_expectations/checkpoints/
+great_expectations/expectations/
+great_expectations/profilers/
+great_expectations/validations/
+
+# README files
+README.md
+**/README.md 
