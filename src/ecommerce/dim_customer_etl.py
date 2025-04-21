@@ -137,43 +137,43 @@ def check_audit_failures(validation_results):
 
 def run():
     conn = sqlite3.connect('data/ecommerce.db')
-    cursor = conn.cursor()
+    db_cursor = conn.cursor()
 
     # NOTE: WRITE -> AUDIT -> PUBLISH pattern
-    write_non_validated_base_customer(cursor)
+    write_non_validated_base_customer(db_cursor)
 
     base_customer_validation_result = audit('non_validated_base_customer')
     if check_audit_failures(base_customer_validation_result ):
-        publish_base_customer(cursor)
+        publish_base_customer(db_cursor)
     else:
         print("======== base_customer DQ check failed ==========")
         print(base_customer_validation_result)
         sys.exit(1)
 
-    write_non_validated_base_state(cursor)
+    write_non_validated_base_state(db_cursor)
     base_state_validation_result = audit('non_validated_base_state')
     if check_audit_failures(base_state_validation_result):
-        publish_base_state(cursor)
+        publish_base_state(db_cursor)
     else:
         print("======== base_state DQ check failed ==========")
         print(base_state_validation_result)
         sys.exit(1)
 
-    write_non_validated_dim_customer(cursor)
+    write_non_validated_dim_customer(db_cursor)
     conn.commit()
 
     dim_customer_validation_result = audit('non_validated_dim_customer')
     dim_customer_count_anomaly = audit('dim_customer_dt_created_count')
     if check_audit_failures(dim_customer_validation_result) and check_audit_failures(dim_customer_count_anomaly):
-        publish_dim_customer(cursor)
+        publish_dim_customer(db_cursor)
     else:
         print("======== dim_customer DQ check failed ==========")
         print(dim_customer_validation_result)
         sys.exit(1)
 
-    cursor.execute("DELETE FROM non_validated_dim_customer;")
-    cursor.execute("DELETE FROM non_validated_base_customer;")
-    cursor.execute("DELETE FROM non_validated_base_state")
+    db_cursor.execute("DELETE FROM non_validated_dim_customer;")
+    db_cursor.execute("DELETE FROM non_validated_base_customer;")
+    db_cursor.execute("DELETE FROM non_validated_base_state")
     conn.commit()
 
     # Commit the changes and close the connection
