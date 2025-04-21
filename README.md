@@ -1,4 +1,4 @@
-# ETL Testing
+# Data Quality Testing with Great Expectations
 
 A comprehensive data quality testing framework using Great Expectations for e-commerce data validation.
 
