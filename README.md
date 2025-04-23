@@ -11,7 +11,9 @@ A comprehensive data quality testing framework using Great Expectations for e-co
 │   └── setup/             # Setup and configuration
 ├── tests/                 # Test files
 │   ├── features/          # BDD feature files
-│   └── steps/             # Step definitions
+│   ├── step_definitions/  # Step definition files
+│   ├── environment.py     # Behave environment configuration
+│   └── data/             # Test data files
 ├── data/                  # Data files and databases
 ├── requirements/          # Project dependencies
 │   ├── requirements.txt   # Production dependencies
@@ -111,7 +113,8 @@ behave tests/features/your_feature.feature
 ### Test Structure
 
 - Feature files in `tests/features/`
-- Step definitions in `tests/features/steps/`
+- Step definitions in `tests/step_definitions/`
+- Environment configuration in `tests/environment.py`
 - Test data in `tests/data/`
 
 ### Test Reports

@@ -28,20 +28,14 @@ Usage:
 from pathlib import Path
 import sys
 import os
-from datetime import datetime
-import allure
-import atexit
-import json
 import subprocess
-import time
 import shutil
-import uuid
+import atexit
 
 # Add the parent directory to the path so we can import the modules
 sys.path.append(str(Path(__file__).parent.parent))
 
 from src.ecommerce.init_db import init_db
-from src.ecommerce.dim_customer_etl import run
 
 def find_allure_path():
     """
@@ -101,7 +95,7 @@ def before_all(context):
     """
     context.config.setup_logging()
     
-    # Initialize database only
+    # Initialize database
     init_db()
     
     # Clean and create allure-results directory
@@ -116,68 +110,4 @@ def before_all(context):
         f.write('Language=Python\n')
     
     # Register the report generation to run after all tests
-    atexit.register(generate_allure_report)
-
-def after_scenario(context, scenario):
-    """
-    Run after each test scenario.
-    Generates Allure report data for the scenario.
-    
-    Args:
-        context: Behave context object
-        scenario: Behave scenario object
-    """
-    current_time = int(time.time() * 1000)
-    
-    # Create container file
-    container = {
-        'uuid': str(uuid.uuid4()),
-        'name': scenario.feature.name,
-        'children': [],
-        'befores': [],
-        'afters': [],
-        'links': [],
-        'start': current_time,
-        'stop': current_time
-    }
-    
-    # Create test result file
-    test_result = {
-        'uuid': str(uuid.uuid4()),
-        'historyId': str(uuid.uuid4()),
-        'name': scenario.name,
-        'fullName': f"{scenario.feature.name}: {scenario.name}",
-        'status': 'passed' if scenario.status == 'passed' else 'failed',
-        'stage': 'finished',
-        'start': current_time,
-        'stop': current_time,
-        'steps': [
-            {
-                'name': step.name,
-                'status': 'passed' if step.status == 'passed' else 'failed',
-                'stage': 'finished',
-                'start': current_time,
-                'stop': current_time,
-                'parameters': []
-            }
-            for step in scenario.steps
-        ],
-        'parameters': [],
-        'labels': [
-            {'name': 'feature', 'value': scenario.feature.name},
-            {'name': 'suite', 'value': scenario.feature.name},
-            {'name': 'severity', 'value': 'normal'},
-            {'name': 'framework', 'value': 'behave'},
-            {'name': 'language', 'value': 'python'}
-        ]
-    }
-    
-    # Save container file
-    container_file = os.path.join('allure-results', f'{container["uuid"]}-container.json')
-    with open(container_file, 'w') as f:
-        json.dump(container, f, indent=2)
-    
-    # Save test result file
-    result_file = os.path.join('allure-results', f'{test_result["uuid"]}-result.json')
-    with open(result_file, 'w') as f:
-        json.dump(test_result, f, indent=2) 
+    atexit.register(generate_allure_report) 
