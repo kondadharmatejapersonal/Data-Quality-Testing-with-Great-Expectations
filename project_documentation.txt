@@ -1,0 +1,208 @@
+# Data Quality Testing with Great Expectations - Project Documentation
+
+## 1. Project Structure
+The project is organized into the following directories:
+- src/ecommerce/: Main application code
+- src/setup/: Setup and configuration code
+- tests/: Test files using Behave (BDD framework)
+- data/: SQLite database and data files
+- requirements/: Project dependencies
+- config/: Configuration files
+- docs/: Documentation
+- logs/: Log files
+
+## 2. Database Structure
+
+### 2.1 Raw Tables (Initial Data Storage)
+1. raw_customer:
+   - customer_id (INTEGER PRIMARY KEY)
+   - zipcode (TEXT)
+   - city (TEXT)
+   - state_code (TEXT)
+   - datetime_created (DATETIME)
+   - datetime_updated (DATETIME)
+
+2. raw_state:
+   - state_id (INTEGER PRIMARY KEY)
+   - state_code (TEXT)
+   - state_name (TEXT)
+
+### 2.2 Non-Validated Tables (Temporary Storage)
+1. non_validated_base_customer:
+   - customer_id (INTEGER)
+   - zipcode (TEXT)
+   - city (TEXT)
+   - state_code (TEXT)
+   - datetime_created (DATETIME)
+   - datetime_updated (DATETIME)
+   - etl_inserted (DATETIME)
+
+2. non_validated_base_state:
+   - state_id (INTEGER)
+   - state_code (TEXT)
+   - state_name (TEXT)
+   - etl_inserted (DATETIME)
+
+3. non_validated_dim_customer:
+   - customer_id (INTEGER)
+   - zipcode (TEXT)
+   - city (TEXT)
+   - state_code (TEXT)
+   - state_name (TEXT)
+   - datetime_created (DATETIME)
+   - datetime_updated (DATETIME)
+   - etl_inserted (DATETIME)
+
+### 2.3 Base Tables (Validated Data)
+1. base_customer:
+   - customer_id (INTEGER)
+   - zipcode (TEXT)
+   - city (TEXT)
+   - state_code (TEXT)
+   - datetime_created (DATETIME)
+   - datetime_updated (DATETIME)
+   - etl_inserted (DATETIME)
+
+2. base_state:
+   - state_id (INTEGER)
+   - state_code (TEXT)
+   - state_name (TEXT)
+   - etl_inserted (DATETIME)
+
+### 2.4 Final Dimension Table
+1. dim_customer:
+   - customer_id (INTEGER)
+   - zipcode (TEXT)
+   - city (TEXT)
+   - state_code (TEXT)
+   - state_name (TEXT)
+   - datetime_created (DATETIME)
+   - datetime_updated (DATETIME)
+   - etl_inserted (DATETIME)
+
+## 3. Data Flow Process
+
+### 3.1 Initial Data Loading
+1. Sample state data is loaded into raw_state:
+   - (1, 'CA', 'California')
+   - (2, 'NY', 'New York')
+   - (3, 'TX', 'Texas')
+
+2. Sample customer data is loaded into raw_customer:
+   - (1, '90001', 'Los Angeles', 'CA', '2023-01-01', '2023-01-01')
+   - (2, '10001', 'New York', 'NY', '2023-01-02', '2023-01-02')
+   - (3, '75001', 'Dallas', 'TX', '2023-01-03', '2023-01-03')
+
+### 3.2 Customer Data Processing
+1. Data moves from raw_customer to non_validated_base_customer
+2. Great Expectations validation is performed
+3. If validation passes, data moves to base_customer
+4. If validation fails, process stops with error
+
+### 3.3 State Data Processing
+1. Data moves from raw_state to non_validated_base_state
+2. Great Expectations validation is performed
+3. If validation passes, data moves to base_state
+4. If validation fails, process stops with error
+
+### 3.4 Dimension Table Creation
+1. Data from base_customer and base_state is joined
+2. Joined data is inserted into non_validated_dim_customer
+3. Great Expectations validation is performed
+4. If validation passes, data moves to dim_customer
+5. If validation fails, process stops with error
+
+### 3.5 Cleanup
+After successful processing:
+1. non_validated_dim_customer is cleared
+2. non_validated_base_customer is cleared
+3. non_validated_base_state is cleared
+
+## 4. Great Expectations Implementation
+
+### 4.1 Configuration
+The great_expectations.yml file configures:
+- Data sources (SQLite database)
+- Stores for expectations and validations
+- Data documentation sites
+- Connection to the ecommerce database
+
+### 4.2 Data Quality Checks
+1. Customer ID Validation:
+   - Ensures customer_id is never null
+   - Marked as ERROR level
+   - Will fail the process if violated
+
+2. State Code Validation:
+   - Ensures state_code is never null
+   - Marked as WARN level
+   - Will log but not fail the process
+
+3. Row Count Validation:
+   - Ensures the number of rows matches the source table
+   - Prevents data loss during transformation
+   - Marked as ERROR level
+
+### 4.3 Validation Process
+1. Before Customer Data Processing:
+   - Writes data to temporary table
+   - Runs GX validations
+   - Only proceeds if all validations pass
+
+2. Before State Data Processing:
+   - Similar validation process for state data
+   - Ensures data quality before proceeding
+
+3. Before Final Dimension Table:
+   - Validates the joined data
+   - Checks for anomalies in data counts
+   - Only publishes if all checks pass
+
+### 4.4 Error Handling
+1. Error Levels:
+   - ERROR: Critical issues that stop the process
+   - WARN: Non-critical issues that are logged but don't stop the process
+
+2. Validation Results:
+   - Success: All validations passed
+   - Failure: One or more validations failed
+   - Warnings: Non-critical issues detected
+
+## 5. Benefits of the Implementation
+
+### 5.1 Data Quality Assurance
+- Validates data types
+- Checks for null values
+- Ensures data completeness
+- Maintains referential integrity
+
+### 5.2 Process Control
+- Prevents bad data from entering the system
+- Stops the ETL process if critical validations fail
+- Provides warnings for non-critical issues
+
+### 5.3 Documentation
+- Maintains clear expectations for data quality
+- Provides validation results for auditing
+- Creates data quality documentation
+
+### 5.4 Flexibility
+- Different severity levels (ERROR vs WARN)
+- Customizable validation rules
+- Extensible framework
+
+## 6. Example Data Flow
+
+### 6.1 Input Data
+raw_customer:
+customer_id | zipcode | city        | state_code | datetime_created | datetime_updated
+1          | 90001   | Los Angeles | CA         | 2023-01-01      | 2023-01-01
+2          | 10001   | New York    | NY         | 2023-01-02      | 2023-01-02
+3          | 75001   | Dallas      | TX         | 2023-01-03      | 2023-01-03
+
+### 6.2 Final Output
+dim_customer:
+customer_id | zipcode | city        | state_code | state_name  | datetime_created | datetime_updated | etl_inserted
+1          | 90001   | Los Angeles | CA         | California  | 2023-01-01      | 2023-01-01      | 2023-01-04
+2          | 10001   | New York    | NY         | New York    | 2023-01-02      | 2023-01-02      | 2023-01-04
+3          | 75001   | Dallas      | TX         | Texas       | 2023-01-03      | 2023-01-03      | 2023-01-04 
